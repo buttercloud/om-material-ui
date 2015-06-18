@@ -11,7 +11,7 @@
   '[AppBar
   AppCanvas
   Circle
-  Checkbox  
+  Checkbox
   DatePicker
   DialogWindow
   Dialog
@@ -20,7 +20,7 @@
   EnhancedButton
   FlatButton
   FloatingActionButton
-  FocusRipple  
+  FocusRipple
   FontIcon
   IconButton
   Icon
@@ -45,21 +45,23 @@
   TableRowsItem
   TableRows
   TextField
+  TimePicker
   Toggle
   ToolbarGroup
   Toolbar
   Tooltip
   TouchRipple])
 
+
 #+clj
-(defn ^:private gen-bootstrap-inline-fn [tag]  
+(defn ^:private gen-bootstrap-inline-fn [tag]
   `(defmacro ~(symbol (kebab-case (str tag)))
      [opts# & children#]
-     (let [ctor# '~(symbol "js" (str "MaterialUI." (name tag)))]       
+     (let [ctor# '(js/React.createFactory ~(symbol "js" (str "MaterialUI." (name tag))))]
        (if (om-tools.dom/literal? opts#)
          (let [[opts# children#] (om-tools.dom/element-args opts# children#)]
            (cond
-            (every? (complement om-tools.dom/possible-coll?) children#) 
+            (every? (complement om-tools.dom/possible-coll?) children#)
             `(~ctor# ~opts# ~@children#)
 
             (and (= (count children#) 1) (vector? (first children#)))
@@ -70,7 +72,8 @@
          `(om-tools.dom/element ~ctor# ~opts# (vector ~@children#))))))
 
 (defmacro ^:private gen-bootstrap-inline-fns []
-  `(do ~@(clojure.core/map gen-bootstrap-inline-fn material-tags))) 
+  `(do ~@(clojure.core/map gen-bootstrap-inline-fn material-tags)))
 
 #+clj
 (gen-bootstrap-inline-fns)
+
